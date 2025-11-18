@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K-Spot - 한류 콘텐츠 여행 플랫폼</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="stylesheet" href="/source/pages/index/style.css" />
+  </head>
+  <script src="/libs/nav-manager.js" type="module"></script>
+  <body>
+    <div id="headerPlaceholder"></div>
+    <!-- 히어로 섹션 -->
+    <section class="hero" id="home">
+      <div class="hero-overlay">
+        <div class="container">
+          <h2 class="hero-title" data-i18n="hero.title">
+            한류 콘텐츠와 함께하는<br />특별한 여행
+          </h2>
+          <p class="hero-subtitle" data-i18n="hero.subtitle">
+            좋아하는 드라마, K-pop, 영화의 촬영지를 직접 방문해보세요!
+          </p>
+          <button class="btn-hero" data-i18n="hero.cta">시작하기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 인기 콘텐츠 섹션 -->
+    <section class="section" id="content">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-text">
+            <h3 class="section-title" data-i18n="popular.title">인기 콘텐츠</h3>
+            <p class="section-subtitle" data-i18n="popular.subtitle">
+              국내외 팬들이 가장 많이 찾는 한류 콘텐츠를 만나보세요
+            </p>
+          </div>
+        </div>
+        <div class="carousel-container">
+          <button
+            class="nav-arrow nav-arrow-left"
+            onclick="scrollCarousel('popularContent', -1)"
+          >
+            ←
+          </button>
+          <div class="carousel-wrapper">
+            <div class="card-carousel" id="popularContent"></div>
+          </div>
+          <button
+            class="nav-arrow nav-arrow-right"
+            onclick="scrollCarousel('popularContent', 1)"
+          >
+            →
+          </button>
+        </div>
+        <div class="carousel-dots" id="popularContentDots"></div>
+      </div>
+    </section>
+
+    <!-- 추천 여행 코스 섹션 -->
+    <section class="section section-alt" id="routes">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-text">
+            <h3 class="section-title" data-i18n="recommended.title">
+              추천 여행 코스
+            </h3>
+            <p class="section-subtitle" data-i18n="recommended.subtitle">
+              취향과 가까운 테마별 코스를 추천
+            </p>
+          </div>
+        </div>
+        <div class="carousel-container">
+          <button
+            class="nav-arrow nav-arrow-left"
+            onclick="scrollCarousel('recommendedCourses', -1)"
+          >
+            ←
+          </button>
+          <div class="carousel-wrapper">
+            <div class="card-carousel" id="recommendedCourses"></div>
+          </div>
+          <button
+            class="nav-arrow nav-arrow-right"
+            onclick="scrollCarousel('recommendedCourses', 1)"
+          >
+            →
+          </button>
+        </div>
+        <div class="carousel-dots" id="recommendedCoursesDots"></div>
+      </div>
+    </section>
+
+    <!-- 사용자 맞춤 추천 섹션 -->
+    <section class="section" id="personalized">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-text">
+            <h3 class="section-title" data-i18n="personalized.title">
+              사용자 맞춤 추천
+            </h3>
+            <p class="section-subtitle" data-i18n="personalized.subtitle">
+              내 취향 맞춤 코스
+            </p>
+          </div>
+        </div>
+        <div class="personalized-wrapper">
+          <div class="carousel-container">
+            <button
+              class="nav-arrow nav-arrow-left"
+              onclick="scrollCarousel('personalizedCourses', -1)"
+            >
+              ←
+            </button>
+            <div class="carousel-wrapper">
+              <div
+                class="card-carousel blur-overlay"
+                id="personalizedCourses"
+              ></div>
+            </div>
+            <button
+              class="nav-arrow nav-arrow-right"
+              onclick="scrollCarousel('personalizedCourses', 1)"
+            >
+              →
+            </button>
+          </div>
+          <div class="carousel-dots" id="personalizedCoursesDots"></div>
+          <div class="login-message">
+            <div class="login-icon">🔒</div>
+            <h3 data-i18n="personalized.loginRequired">로그인이 필요합니다</h3>
+            <p data-i18n="personalized.loginMessage">
+              맞춤 여행 추천을 받으시려면 로그인해주세요
+            </p>
+            <button class="btn-login-large" data-i18n="btn.login">
+              로그인하기
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h3>K-SPOT</h3>
+            <p data-i18n="footer.tagline">한류 콘텐츠와 함께하는 특별한 여행</p>
+            <div class="social-links">
+              <a href="#">📷</a>
+              <a href="#">🐦</a>
+              <a href="#">👍</a>
+            </div>
+          </div>
+          <div class="footer-links">
+            <div class="footer-column">
+              <h4 data-i18n="footer.service">서비스</h4>
+              <a href="#" data-i18n="footer.contentTravel">콘텐츠별 여행지</a>
+              <a href="#" data-i18n="footer.regionExplore">지역별 탐색</a>
+              <a href="#" data-i18n="footer.popularRoutes">인기 루트</a>
+            </div>
+            <div class="footer-column">
+              <h4 data-i18n="footer.support">고객지원</h4>
+              <a href="#" data-i18n="footer.faq">FAQ</a>
+              <a href="#" data-i18n="footer.contact">문의하기</a>
+              <a href="#" data-i18n="footer.terms">이용약관</a>
+            </div>
+            <div class="footer-column">
+              <h4 data-i18n="footer.social">소셜미디어</h4>
+              <a href="#">Instagram</a>
+              <a href="#">Twitter</a>
+              <a href="#">Facebook</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 K-Spot. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/source/pages/index/script.js"></script>
+
+    <script>
+      window.AUTH_PATHS = {
+        INDEX: "/source/pages/index/index.html",
+        SET_NICK: "/auth/set-nickname.html",
+      };
+    </script>
+
+    <!-- <script type="module" src="/auth/auth.js"></script> -->
+  </body>
+</html>
