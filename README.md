@@ -2,7 +2,7 @@
 
 이걸 권리매매 사이트로 바꾸는중
 
-**🛠️ 기술 스택 (Tech Stack)**
+**🛠️ 기술 스택 (Tech Stack)** 이정도 쓴듯? 더 확인되면 업뎃함
 <div align="center">
 
 Frontend
