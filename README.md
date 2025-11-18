@@ -3,5 +3,9 @@
 이걸 권리매매 사이트로 바꾸는중
 
 frontend: bootstrap,js,jquery
+
 backend: docker(프레임워크), server(js)
+
 db: supabase, sql
+
+배포: render
