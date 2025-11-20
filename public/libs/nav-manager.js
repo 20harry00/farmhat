@@ -104,6 +104,41 @@ function initializeHeader() {
     });
   }
 
+  function setupLogoLink() {
+    // _header.html 안에서 로고 링크에 data-role="logo-home" 을 달아두면 가장 먼저 사용
+    // 없으면 .logo a 를 사용
+    const logoLink =
+      document.querySelector("[data-role='logo-home']") ||
+      document.querySelector(".logo a");
+
+    if (!logoLink) return;
+
+    logoLink.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const paths = window.AUTH_PATHS || {};
+      const indexPath = paths.INDEX || "/";
+
+      // 이미 메인 페이지에 있는 경우: #home 섹션으로 스무스 스크롤
+      const isOnIndex =
+        window.location.pathname === indexPath ||
+        (indexPath === "/" &&
+          (window.location.pathname === "/" ||
+            window.location.pathname.includes("index.html")));
+
+      if (isOnIndex) {
+        const homeSection = document.getElementById("home");
+        if (homeSection) {
+          homeSection.scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+      }
+
+      // 메인이 아니면 메인 페이지로 이동
+      window.location.href = indexPath;
+    });
+  }
+
   function setupEventListeners() {
     const langSelector = document.getElementById("languageSelector");
     if (langSelector) {
@@ -113,15 +148,21 @@ function initializeHeader() {
       );
     }
 
-    document.getElementById("loginBtn")?.addEventListener("click", auth.signInWithGoogle);
-    document.getElementById("logoutBtn")?.addEventListener("click", auth.signOut);
+    document
+      .getElementById("loginBtn")
+      ?.addEventListener("click", auth.signInWithGoogle);
+    document
+      .getElementById("logoutBtn")
+      ?.addEventListener("click", auth.signOut);
 
     document.querySelectorAll(".nav-link").forEach((link) => {
       link.addEventListener("click", (e) => {
-        const target = link.getAttribute("href");
+        const target = link.getAttribute("href") || "";
         if (target.startsWith("#")) {
           e.preventDefault();
-          document.querySelector(target)?.scrollIntoView({ behavior: "smooth" });
+          document
+            .querySelector(target)
+            ?.scrollIntoView({ behavior: "smooth" });
         }
       });
     });
@@ -240,6 +281,7 @@ function initializeHeader() {
     }
 
     function setWrapHeight(open) {
+      if (!wrap || !header) return;
       if (open) {
         wrap.style.height = wrap.scrollHeight + "px";
         header.classList.add("header--search-open");
@@ -249,17 +291,20 @@ function initializeHeader() {
       }
     }
     function openSearch() {
-      results.innerHTML = "";
+      if (!wrap) return;
+      results && (results.innerHTML = "");
       clearRail();
-      input.value = "";
+      if (input) input.value = "";
       setWrapHeight(true);
-      setTimeout(() => input.focus(), 0);
+      setTimeout(() => input?.focus(), 0);
       ensureContentsLoaded();
     }
     function closeSearch() {
+      if (!wrap) return;
       setWrapHeight(false);
     }
     function toggleSearch() {
+      if (!wrap) return;
       const isOpen = wrap.style.height && wrap.style.height !== "0px";
       isOpen ? closeSearch() : openSearch();
     }
@@ -269,7 +314,7 @@ function initializeHeader() {
       if (e.key === "Escape") closeSearch();
     });
     window.addEventListener("resize", () => {
-      if (wrap.style.height && wrap.style.height !== "0px") {
+      if (wrap && wrap.style.height && wrap.style.height !== "0px") {
         wrap.style.height = "auto";
         const h = wrap.scrollHeight;
         wrap.style.height = h + "px";
@@ -319,117 +364,3 @@ function initializeHeader() {
         .map(({ content, count }) => {
           const score =
             rankScore(q, content) +
-            Math.min(count, 10) * 2 +
-            (boostSet.has(content) ? 15 : 0);
-          return { content, count, score };
-        })
-        .filter((s) => s.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 3)
-        .map((s) => ({
-          id: s.content,
-          title: s.content,
-          subtitle: `관련 장소 약 ${s.count}개`,
-          imageUrl: null,
-          href: `/source/pages/map/map_page.html?name=${encodeURIComponent(
-            s.content
-          )}`,
-        }));
-    }
-
-    const debounce = (fn, ms = 300) => {
-      let t;
-      return (...a) => {
-        clearTimeout(t);
-        t = setTimeout(() => fn(...a), ms);
-      };
-    };
-
-    function renderResults(docs, q) {
-      if (!docs?.length) {
-        results.innerHTML = `<p class="search-empty">"${q}" 검색 결과가 없어요.</p>`;
-      } else {
-        results.innerHTML = docs
-          .slice(0, 20)
-          .map(
-            (d) => `
-            <div class="search-item" data-name="${
-              d.place_name ?? ""
-            }" data-lat="${d.y ?? ""}" data-lng="${d.x ?? ""}">
-              <div style="font-weight:700;">${
-                d.place_name ?? d.media_title ?? ""
-              }</div>
-              <div style="color:#666;font-size:13px;margin-top:2px;">${
-                d.address_name ?? d.media_title ?? ""
-              }</div>
-            </div>
-          `
-          )
-          .join("");
-
-        Array.from(results.querySelectorAll(".search-item")).forEach((el) => {
-          el.addEventListener("click", () => {
-            const name = el.getAttribute("data-name") || "";
-            const lat = el.getAttribute("data-lat") || "";
-            const lng = el.getAttribute("data-lng") || "";
-            const url = `/source/pages/map/map_page.html?name=${encodeURIComponent(
-              name
-            )}&lat=${lat}&lng=${lng}`;
-            window.location.href = url;
-          });
-        });
-      }
-      if (wrap.style.height && wrap.style.height !== "0px") {
-        wrap.style.height = "auto";
-        const h = wrap.scrollHeight;
-        wrap.style.height = h + "px";
-      }
-    }
-
-    async function doSearch(q) {
-      if (!q || !q.trim()) {
-        results.innerHTML = "";
-        renderRail([]);
-        return;
-      }
-      try {
-        const [byText, byContent] = await Promise.all([
-          fetch(`/api/search?q=${encodeURIComponent(q)}`)
-            .then((r) => (r.ok ? r.json() : { documents: [] }))
-            .catch(() => ({ documents: [] })),
-          fetch(`/api/search-by-content?name=${encodeURIComponent(q)}`)
-            .then((r) => (r.ok ? r.json() : { documents: [] }))
-            .catch(() => ({ documents: [] })),
-        ]);
-
-        const docs = [
-          ...(byText?.documents ?? []),
-          ...(byContent?.documents ?? []),
-        ];
-        renderResults(docs, q);
-
-        const boostSet = new Set(
-          (docs || []).map((d) => (d.media_title || "").trim()).filter(Boolean)
-        );
-        const items = buildCardItems(q, boostSet);
-        renderRail(items);
-      } catch (e) {
-        console.error(e);
-        results.innerHTML = `<p class="search-empty">검색 중 오류가 발생했어요.</p>`;
-        renderRail([]);
-      }
-    }
-
-    input?.addEventListener(
-      "input",
-      debounce((e) => doSearch(e.target.value), 300)
-    );
-    btnDo?.addEventListener("click", () => doSearch(input.value));
-  }
-
-  updateLanguage(currentLang);
-  updateActiveNav();
-  setupEventListeners();
-  initializeAuth();
-  setupSearchModal();
-}
